@@ -4,9 +4,9 @@ SUPPORTED_CRYPTOS: dict[str, str] = {
     "BNB": "Binance Coin",
     "ADA": "Cardano",
     "SOL": "Solana",
-    "TON": "TON",
+    "TON": "The Open Network",
     "TRX": "Tron",
     "SHIB": "Shiba Inu",
     "DOGE": "Dogecoin",
-    "DOT": "Polkadot"
+    "DOT": "Polkadot",
 }
