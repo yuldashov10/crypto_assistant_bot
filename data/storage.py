@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import sqlite3
-from typing import IO
+import typing  # noqa: skip
 
 from .abstract import ExportData, Storage
 from core.constants import SUPPORTED_CRYPTOS
@@ -10,8 +10,8 @@ from core.logging import LoggerConfig
 
 logger = LoggerConfig(
     logger_name="storage",
-    log_file="cca_bot.log",
-    log_level=logging.INFO,
+    log_file="cab.log",
+    log_level=logging.DEBUG,
 ).get_logger()
 
 
@@ -126,7 +126,7 @@ class MemoryStorage(Storage, ExportData):
 class SQLiteStorage(Storage, ExportData):
     """Хранилище данных в SQLite."""
 
-    def __init__(self, db_path: str = "purchases.db") -> None:
+    def __init__(self, db_path: str = "cab.db") -> None:
         self.db_path = db_path
         self._init_db()
         logger.info(f"Инициализировано SQLite хранилище: {db_path}")
@@ -163,7 +163,7 @@ class SQLiteStorage(Storage, ExportData):
                 cursor = conn.cursor()
                 cursor.execute(
                     """
-                    INSERT INTO purchases (user_id, asset, price, amount) 
+                    INSERT INTO purchases (user_id, asset, price, amount)
                     VALUES (?, ?, ?, ?)
                     """,
                     (user_id, asset, price, amount),
@@ -185,8 +185,8 @@ class SQLiteStorage(Storage, ExportData):
                 cursor = conn.cursor()
                 cursor.execute(
                     """
-                    SELECT price, amount 
-                    FROM purchases 
+                    SELECT price, amount
+                    FROM purchases
                     WHERE user_id = ? AND asset = ?
                     """,
                     (user_id, asset),
@@ -210,8 +210,8 @@ class SQLiteStorage(Storage, ExportData):
                 cursor = conn.cursor()
                 cursor.execute(
                     """
-                    SELECT DISTINCT asset 
-                    FROM purchases 
+                    SELECT DISTINCT asset
+                    FROM purchases
                     WHERE user_id = ?
                     """,
                     (user_id,),
@@ -265,8 +265,8 @@ class SQLiteStorage(Storage, ExportData):
                 # Получаем все покупки для актива
                 cursor.execute(
                     """
-                    SELECT price, amount 
-                    FROM purchases 
+                    SELECT price, amount
+                    FROM purchases
                     WHERE user_id = ? AND asset = ?
                     """,
                     (user_id, asset),
@@ -276,11 +276,9 @@ class SQLiteStorage(Storage, ExportData):
                     price, amount = purchases[purchase_index]
                     cursor.execute(
                         """
-                        DELETE FROM purchases 
-                        WHERE user_id = ? AND 
-                              asset = ? AND 
-                              price = ? AND 
-                              amount = ?
+                        DELETE FROM purchases
+                        WHERE user_id = ?
+                        AND asset = ? AND price = ? AND amount = ?
                         """,
                         (user_id, asset, price, amount),
                     )
@@ -303,8 +301,8 @@ class SQLiteStorage(Storage, ExportData):
                 cursor = conn.cursor()
                 cursor.execute(
                     """
-                    SELECT user_id, asset, price, amount 
-                    FROM purchases 
+                    SELECT user_id, asset, price, amount
+                    FROM purchases
                     WHERE user_id = ?
                     """,
                     (user_id,),
@@ -356,7 +354,7 @@ class JSONStorage(Storage, ExportData):
         try:
             with open(
                 self.file_path, "w", encoding="UTF-8"
-            ) as file:  # type: IO[str]
+            ) as file:  # type: typing.IO[str]
                 json.dump(self.data, file, indent=4)
 
             logger.debug(f"Данные сохранены в JSON: {self.file_path}")

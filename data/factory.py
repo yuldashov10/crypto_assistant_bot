@@ -6,8 +6,8 @@ from core.logging import LoggerConfig
 
 logger = LoggerConfig(
     logger_name="factory",
-    log_file="cca_bot.log",
-    log_level=logging.INFO,
+    log_file="cab.log",
+    log_level=logging.DEBUG,
 ).get_logger()
 
 
@@ -19,7 +19,7 @@ class StorageFactory:
         if storage_type == "memory":
             return MemoryStorage()
         elif storage_type == "sqlite":
-            return SQLiteStorage(db_path=kwargs.get("db_path", "purchases.db"))
+            return SQLiteStorage(db_path=kwargs.get("db_path", "cab.db"))
         elif storage_type == "json":
             return JSONStorage(
                 file_path=kwargs.get("file_path", "purchases.json")

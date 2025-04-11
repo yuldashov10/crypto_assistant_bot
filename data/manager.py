@@ -5,8 +5,8 @@ from core.logging import LoggerConfig
 
 logger = LoggerConfig(
     logger_name="data_manager",
-    log_file="cca_bot.log",
-    log_level=logging.INFO,
+    log_file="cab.log",
+    log_level=logging.DEBUG,
 ).get_logger()
 
 
@@ -25,6 +25,16 @@ class DataManager:
             f"Добавлена покупка: user_id={user_id}, "
             f"asset={asset}, price={price}, amount={amount}"
         )
+
+    def get_purchases(
+        self, user_id: int, asset: str
+    ) -> list[dict[str, float]]:
+        purchases = self.storage.get_purchases(user_id, asset)
+        logger.debug(
+            f"Получены покупки для user_id={user_id}, "
+            f"asset={asset}, count={len(purchases)}"
+        )
+        return purchases
 
     def __get_total_cost(self, purchases) -> float:
         return sum(p["price"] * p["amount"] for p in purchases)
