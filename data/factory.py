@@ -21,9 +21,7 @@ class StorageFactory:
         elif storage_type == "sqlite":
             return SQLiteStorage(db_path=kwargs.get("db_path", "cab.db"))
         elif storage_type == "json":
-            return JSONStorage(
-                file_path=kwargs.get("file_path", "purchases.json")
-            )
+            return JSONStorage(file_path=kwargs.get("file_path", "cab.json"))
 
         logger.error(f"Неизвестный тип хранилища: {storage_type}")
         raise TypeError(f"Неизвестный тип хранилища: {storage_type}")

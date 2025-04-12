@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import logging
 
@@ -10,19 +11,19 @@ from data.manager import DataManager
 from handlers.base import setup_handlers
 
 
-async def main() -> None:
+async def main(storage_type: str, db_path: str) -> None:
     bot = Bot(token=BOT_API_TOKEN)
     dp = Dispatcher()
 
     storage = StorageFactory.create_storage(
-        "sqlite",
-        db_path=DATABASE_PATH,
+        storage_type,
+        db_path=db_path,
     )
     data_manager = DataManager(storage)
 
     dp.include_router(setup_handlers(data_manager))
 
-    logger.info("Бот запущен")
+    logger.info(f"Бот запущен с типом хранилища: {storage_type}")
     try:
         await dp.start_polling(bot)
     finally:
@@ -38,4 +39,15 @@ if __name__ == "__main__":
         console_output=True,
     ).get_logger()
 
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Crypto Assistant Bot")
+    parser.add_argument(
+        "-s",
+        "--storage",
+        type=str,
+        default="sqlite",
+        choices=["memory", "sqlite", "json"],
+        help="Тип хранилища: memory, sqlite или json (по умолчанию: sqlite)",
+    )
+    args = parser.parse_args()
+
+    asyncio.run(main(args.storage, DATABASE_PATH))
